@@ -2,7 +2,6 @@
 
 package com.uhufor.udf.single
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
@@ -12,7 +11,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.lang.reflect.Method
 
 abstract class SingleFlowViewModel<UiEvent, UiEffect, UiState> : ViewModel() {
     protected val event: MutableSharedFlow<UiEvent> = MutableSharedFlow()
@@ -27,7 +25,9 @@ abstract class SingleFlowViewModel<UiEvent, UiEffect, UiState> : ViewModel() {
     val state: StateFlow<UiState>
         get() = _state.asStateFlow()
 
-    private val methodCache: MutableMap<Class<*>, Method> = mutableMapOf()
+    private val uiEventDispatcher by lazy {
+        SingleFlowUiEventDispatcher<UiEvent>(this::class.java)
+    }
 
     init {
         observeEvent()
@@ -41,37 +41,7 @@ abstract class SingleFlowViewModel<UiEvent, UiEffect, UiState> : ViewModel() {
     }
 
     open fun handleEvent(event: UiEvent) {
-        handleEventByAnnotation(event)
-    }
-
-    private fun handleEventByAnnotation(event: UiEvent) {
-        val target = event ?: return
-
-        if (methodCache.isEmpty()) {
-            this.javaClass.declaredMethods
-                .filter { it.isAnnotationPresent(SingleFlowUiEvent::class.java) }
-                .onEach { method ->
-                    val annotation = method.getAnnotation(SingleFlowUiEvent::class.java)
-                    if (annotation != null) {
-                        methodCache[annotation.target.java] = method
-                    }
-                }
-        }
-
-        val method = methodCache[target::class.java]
-
-        runCatching {
-            method?.let {
-                it.isAccessible = true
-                if (it.parameterCount == 0) {
-                    it.invoke(this)
-                } else {
-                    it.invoke(this, event)
-                }
-            }
-        }.onFailure {
-            Log.w("udf", "handleEventByAnnotation: ${it.message}")
-        }
+        uiEventDispatcher.dispatchByAnnotation(instance = this, event = event)
     }
     //endregion
 
