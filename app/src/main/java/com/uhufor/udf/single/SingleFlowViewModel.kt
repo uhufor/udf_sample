@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.lang.reflect.Method
 
 abstract class SingleFlowViewModel<UiEvent, UiEffect, UiState> : ViewModel() {
     protected val event: MutableSharedFlow<UiEvent> = MutableSharedFlow()
@@ -25,7 +26,8 @@ abstract class SingleFlowViewModel<UiEvent, UiEffect, UiState> : ViewModel() {
     }
     val state: StateFlow<UiState>
         get() = _state.asStateFlow()
-    //endregion
+
+    private val methodCache: MutableMap<Class<*>, Method> = mutableMapOf()
 
     init {
         observeEvent()
@@ -45,15 +47,18 @@ abstract class SingleFlowViewModel<UiEvent, UiEffect, UiState> : ViewModel() {
     private fun handleEventByAnnotation(event: UiEvent) {
         val target = event ?: return
 
-        val eventMethods = this.javaClass
-            .declaredMethods
-            .filter { it.annotations.any { annotation -> annotation is SingleFlowUiEvent } }
+        if (methodCache.isEmpty()) {
+            this.javaClass.declaredMethods
+                .filter { it.isAnnotationPresent(SingleFlowUiEvent::class.java) }
+                .onEach { method ->
+                    val annotation = method.getAnnotation(SingleFlowUiEvent::class.java)
+                    if (annotation != null) {
+                        methodCache[annotation.target.java] = method
+                    }
+                }
+        }
 
-        val method = eventMethods
-            .firstOrNull {
-                it.getAnnotation(SingleFlowUiEvent::class.java)?.target == target::class ||
-                        (it.parameterCount == 1 && it.parameterTypes[0] == target::class.java)
-            }
+        val method = methodCache[target::class.java]
 
         runCatching {
             method?.let {
