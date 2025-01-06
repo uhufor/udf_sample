@@ -2,6 +2,7 @@
 
 package com.uhufor.udf.single
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
@@ -37,7 +38,36 @@ abstract class SingleFlowViewModel<UiEvent, UiEffect, UiState> : ViewModel() {
         }
     }
 
-    abstract fun handleEvent(event: UiEvent)
+    open fun handleEvent(event: UiEvent) {
+        handleEventByAnnotation(event)
+    }
+
+    private fun handleEventByAnnotation(event: UiEvent) {
+        val target = event ?: return
+
+        val eventMethods = this.javaClass
+            .declaredMethods
+            .filter { it.annotations.any { annotation -> annotation is SingleFlowUiEvent } }
+
+        val method = eventMethods
+            .firstOrNull {
+                it.getAnnotation(SingleFlowUiEvent::class.java)?.target == target::class ||
+                        (it.parameterCount == 1 && it.parameterTypes[0] == target::class.java)
+            }
+
+        runCatching {
+            method?.let {
+                it.isAccessible = true
+                if (it.parameterCount == 0) {
+                    it.invoke(this)
+                } else {
+                    it.invoke(this, event)
+                }
+            }
+        }.onFailure {
+            Log.w("udf", "handleEventByAnnotation: ${it.message}")
+        }
+    }
     //endregion
 
     //region Effect
