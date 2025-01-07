@@ -21,5 +21,5 @@
 #-renamesourcefileattribute SourceFile
 
 -keepclassmembers class * {
-    @com.uhufor.udf.single.SingleFlowUiEvent *;
+    @com.uhufor.udf.annotation.SingleFlowUiEvent *;
 }

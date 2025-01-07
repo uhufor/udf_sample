@@ -10,21 +10,26 @@ class SingleFlowCounterViewModel(
 
     override fun handleEvent(event: SingleFlowCounterEvent) {
         when (event) {
-            is SingleFlowCounterEvent.OnClickDecrement -> {
-                handleOnClickDecrement()
-            }
+//            is SingleFlowCounterEvent.OnClickDecrement -> {
+//                handleOnClickDecrement()
+//            }
             else -> {
-                super.handleEvent(event)
+                if (true) {
+                    SingleFlowCounterViewModel_Dispatcher.dispatchEvent(this, event)
+                } else {
+                    super.handleEvent(event)
+                }
             }
         }
     }
 
     @SingleFlowUiEvent(SingleFlowCounterEvent.OnClickIncrement::class)
-    private fun handleOnClickIncrement(event: SingleFlowCounterEvent.OnClickIncrement) {
+    fun handleOnClickIncrement(event: SingleFlowCounterEvent.OnClickIncrement) {
         reduce { copy(count = count + 1) }
     }
 
-    private fun handleOnClickDecrement() {
+    @SingleFlowUiEvent(SingleFlowCounterEvent.OnClickDecrement::class)
+    fun handleOnClickDecrement() {
         if (state.value.count > 0) {
             reduce { copy(count = count - 1) }
         } else {

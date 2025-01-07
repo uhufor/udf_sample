@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -35,15 +36,14 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
-        dataBinding = true
         viewBinding = true
         compose = true
     }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -55,6 +55,8 @@ dependencies {
     implementation(libs.androidx.viewbinding)
 
     implementation(project(":ui-event-annotation"))
+    implementation(project(":ui-event-annotation-processor"))
+    ksp(project(":ui-event-annotation-processor"))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
