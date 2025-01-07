@@ -1,6 +1,7 @@
 package com.uhufor.udf.single
 
 import android.util.Log
+import com.uhufor.udf.annotation.SingleFlowUiEvent
 import java.lang.reflect.Method
 
 // TODO: Add exception handler

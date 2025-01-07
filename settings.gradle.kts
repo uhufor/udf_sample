@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Udf Sample"
 include(":app")
+include(":ui-event-annotation")

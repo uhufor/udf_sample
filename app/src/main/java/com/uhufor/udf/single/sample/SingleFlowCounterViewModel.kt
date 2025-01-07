@@ -1,7 +1,6 @@
 package com.uhufor.udf.single.sample
 
-import android.util.Log
-import com.uhufor.udf.single.SingleFlowUiEvent
+import com.uhufor.udf.annotation.SingleFlowUiEvent
 import com.uhufor.udf.single.SingleFlowViewModel
 
 class SingleFlowCounterViewModel(
