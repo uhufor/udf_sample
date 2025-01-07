@@ -1,10 +1,13 @@
 package com.uhufor.udf.single.sample
 
 import com.uhufor.udf.annotation.SingleFlowUiEvent
+import com.uhufor.udf.dispatcher.GeneratedUiEventDispatcher
 import com.uhufor.udf.single.SingleFlowViewModel
 
 class SingleFlowCounterViewModel(
 ) : SingleFlowViewModel<SingleFlowCounterEvent, SingleFlowCounterEffect, SingleFlowCounterState>() {
+    override val generatedUiEventDispatcher: GeneratedUiEventDispatcher =
+        SingleFlowCounterViewModelDispatcher
 
     override fun getInitialState(): SingleFlowCounterState = SingleFlowCounterState(count = 0)
 
@@ -14,11 +17,7 @@ class SingleFlowCounterViewModel(
 //                handleOnClickDecrement()
 //            }
             else -> {
-                if (true) {
-                    SingleFlowCounterViewModel_Dispatcher.dispatchEvent(this, event)
-                } else {
-                    super.handleEvent(event)
-                }
+                super.handleEvent(event)
             }
         }
     }

@@ -4,6 +4,7 @@ package com.uhufor.udf.single
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.uhufor.udf.dispatcher.GeneratedUiEventDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +30,8 @@ abstract class SingleFlowViewModel<UiEvent, UiEffect, UiState> : ViewModel() {
         SingleFlowUiEventDispatcher<UiEvent>(this::class.java)
     }
 
+    abstract val generatedUiEventDispatcher: GeneratedUiEventDispatcher
+
     init {
         observeEvent()
     }
@@ -41,7 +44,11 @@ abstract class SingleFlowViewModel<UiEvent, UiEffect, UiState> : ViewModel() {
     }
 
     open fun handleEvent(event: UiEvent) {
-        uiEventDispatcher.dispatchByAnnotation(instance = this, event = event)
+        if (true) {
+            generatedUiEventDispatcher.dispatchEvent(instance = this, event = event)
+        } else {
+            uiEventDispatcher.dispatchByAnnotation(instance = this, event = event)
+        }
     }
     //endregion
 

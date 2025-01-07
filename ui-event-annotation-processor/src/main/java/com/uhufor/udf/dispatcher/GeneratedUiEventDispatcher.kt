@@ -1,5 +1,5 @@
 package com.uhufor.udf.dispatcher
 
-interface EventDispatcher {
+interface GeneratedUiEventDispatcher {
     fun dispatchEvent(instance: Any, event: Any?)
 }
