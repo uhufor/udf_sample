@@ -59,6 +59,9 @@ dependencies {
     ksp(project(":ui-event-annotation-processor"))
 
     testImplementation(libs.junit)
+    testImplementation(libs.truth)
+    testImplementation(libs.jetbrains.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
