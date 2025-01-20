@@ -58,5 +58,6 @@ jobs:
         run: ./gradlew jacocoTestReport
 
       - name: SonarQube Analysis
-        run: ./gradlew sonar \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew sonar -Dsonar.login=${{ secrets.SONAR_TOKEN }}
