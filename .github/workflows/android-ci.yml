@@ -56,3 +56,7 @@ jobs:
 
       - name: Generate JaCoCo coverage report
         run: ./gradlew jacocoTestReport
+
+      - name: SonarQube Analysis
+        run: ./gradlew sonar \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}

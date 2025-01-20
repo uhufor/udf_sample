@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.jvm) apply false
+    id("org.sonarqube") version "4.3.0.3225"
 }
 
 subprojects {
@@ -17,5 +18,20 @@ subprojects {
                 toolVersion = rootProject.extra["jacocoVersion"] as String
             }
         }
+    }
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "uhufor_udf_sample")
+        property("sonar.organization", "uhufor")
+        property("sonar.host.url", "https://sonarcloud.io")
+
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            listOf(
+                "${project.projectDir}/app/build/reports/jacoco/testDebugUnitTestReport/testDebugUnitTestReport.xml"
+            )
+        )
     }
 }
