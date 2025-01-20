@@ -1,0 +1,32 @@
+name: PR Auto Commenter
+
+on:
+  pull_request_target:
+    types:
+      - opened
+
+jobs:
+  add-comment:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Add PR comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const comment = `
+            🚀 **PR 생성 시 자동 코멘트** 🚀
+
+            - 제목: **${context.payload.pull_request.title}**
+            - 작성자: **${context.payload.pull_request.user.login}**
+            
+            감사합니다! 리뷰를 시작하겠습니다. 🙇‍♂️
+            `;
+            await github.rest.issues.createComment({
+              issue_number: context.payload.pull_request.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment,
+            });
