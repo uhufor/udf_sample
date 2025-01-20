@@ -2,8 +2,6 @@ name: PR Auto Commenter
 
 on:
   pull_request_target:
-    types:
-      - opened
 
 jobs:
   add-comment:
