@@ -26,7 +26,7 @@ sonarqube {
         property("sonar.projectKey", "uhufor_udf_sample")
         property("sonar.organization", "uhufor")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.token", "64d7b040973568b17085a0138c3f021af532af9d")
+        property("sonar.token", "PUT_YOUR_SONAR_TOKEN_INTO_HERE")
 
         property("sonar.sources", "src/main/java, src/main/kotlin")
         property("sonar.tests", "src/test/java, src/test/kotlin")
