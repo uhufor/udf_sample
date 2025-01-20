@@ -53,3 +53,6 @@ jobs:
 
       - name: Run Lint
         run: ./gradlew lint
+
+      - name: Generate JaCoCo coverage report
+        run: ./gradlew jacocoTestReport
