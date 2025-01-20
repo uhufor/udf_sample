@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     id("com.uhufor.jacoco-convention")
+    id("com.uhufor.sonarcloud-convention")
 }
 
 android {
