@@ -17,6 +17,7 @@ jobs:
         env:
           COMMENT_BODY: ${{ github.event.comment.body }}
           PR_NUMBER: ${{ github.event.issue.number }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # 코멘트에서 명령어와 소스 브랜치 추출
           COMMAND=$(echo "$COMMENT_BODY" | awk '{print $2}')
