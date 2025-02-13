@@ -2,15 +2,18 @@ name: Android CI
 
 on:
   pull_request:
-    types: [ opened, reopened, synchronize ]
+    types: [opened, reopened, synchronize, edited]
   push:
     branches:
       - main
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+
+    # edited 이벤트일 경우, Base 브랜치 변경이 있을 때만 실행
+    # 그 외 (opened, reopened, synchronize)는 무조건 실행
+    if: github.event.action != 'edited' || github.event.changes.base
 
     env:
       JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
