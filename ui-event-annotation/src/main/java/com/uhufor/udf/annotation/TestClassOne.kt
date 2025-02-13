@@ -1,4 +1,4 @@
 package com.uhufor.udf.annotation
 
-class TestClassOne {
+class TestClassOne(val hello: String) {
 }
