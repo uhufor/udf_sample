@@ -1,0 +1,98 @@
+name: PR Merge Command Handler
+
+on:
+  issue_comment:
+    types:
+      - created
+
+jobs:
+  process-merge-command:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    if: startsWith(github.event.comment.body, '/merge ')  # 코멘트 내용이 '/merge '로 시작하는 경우에만 실행
+    steps:
+      - name: Extract PR Information
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          # 코멘트에서 명령어와 소스 브랜치 추출
+          COMMAND=$(echo "$COMMENT_BODY" | awk '{print $2}')
+          SOURCE_BRANCH=$(echo "$COMMENT_BODY" | awk '{print $3}')
+
+          # GitHub API를 사용하여 PR 정보 가져오기
+          PR_JSON=$(gh api repos/${{ github.repository }}/pulls/$PR_NUMBER)
+          HEAD_BRANCH=$(echo "$PR_JSON" | jq -r '.head.ref')
+          BASE_BRANCH=$(echo "$PR_JSON" | jq -r '.base.ref')
+
+          # 명령어에 따라 타겟 브랜치 설정
+          if [[ "$COMMAND" == "head" ]]; then
+            TARGET_BRANCH="$HEAD_BRANCH"
+          elif [[ "$COMMAND" == "base" ]]; then
+            TARGET_BRANCH="$BASE_BRANCH"
+          else
+            echo "❌ 잘못된 병합 대상입니다. '/merge head <source>' 또는 '/merge base <source>' 형식을 사용하세요."
+            exit 1
+          fi
+
+          # 환경 변수에 저장
+          echo "MERGE_TARGET=$TARGET_BRANCH" >> $GITHUB_ENV
+          echo "SOURCE_BRANCH=$SOURCE_BRANCH" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.MERGE_TARGET }}
+          fetch-depth: 0
+
+      - name: Delete Previous Merge Comments  # 이전 병합 결과 코멘트 삭제
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number
+            });
+
+            for (const comment of comments) {
+              if (comment.body.includes("✅ 병합 성공") || comment.body.includes("❌ 병합 실패")) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: comment.id
+                });
+              }
+            }
+
+      - name: Merge Source Branch  # 소스 브랜치 병합 단계
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Git 설정
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # 병합 시도
+          if git merge origin/${{ env.SOURCE_BRANCH }} --no-edit; then
+            git push origin ${{ env.MERGE_TARGET }}
+            MERGE_STATUS="✅ 병합 성공: ${{ env.SOURCE_BRANCH }} → ${{ env.MERGE_TARGET }}"
+          else
+            git merge --abort
+            MERGE_STATUS="❌ 병합 실패: ${{ env.SOURCE_BRANCH }} → ${{ env.MERGE_TARGET }} 병합 중 충돌 발생"
+          fi
+          
+          echo "MERGE_STATUS=$MERGE_STATUS" >> $GITHUB_ENV
+
+      - name: Add Merge Result Comment  # 병합 결과 코멘트 추가 단계
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              issue_number: context.payload.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: process.env.MERGE_STATUS
+            });
