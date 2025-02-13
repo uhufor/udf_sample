@@ -85,7 +85,7 @@ jobs:
           git config user.email "${{ env.PR_AUTHOR_EMAIL }}"
 
           # 병합 시도
-          if git merge origin/${{ env.SOURCE_BRANCH }} --no-edit; then
+          if git merge --no-ff origin/${{ env.SOURCE_BRANCH }} --no-edit; then
             git push origin ${{ env.MERGE_TARGET }}
             MERGE_STATUS="✅ 병합 성공: ${{ env.SOURCE_BRANCH }} → ${{ env.MERGE_TARGET }}"
           else
