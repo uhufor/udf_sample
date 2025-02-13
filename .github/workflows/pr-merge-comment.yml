@@ -86,7 +86,7 @@ jobs:
 
           # 병합 시도
           if git merge --no-ff origin/${{ env.SOURCE_BRANCH }} --no-edit; then
-            git push origin ${{ env.MERGE_TARGET }}
+            git push --force origin ${{ env.MERGE_TARGET }}
             MERGE_STATUS="✅ 병합 성공: ${{ env.SOURCE_BRANCH }} → ${{ env.MERGE_TARGET }}"
           else
             git merge --abort
