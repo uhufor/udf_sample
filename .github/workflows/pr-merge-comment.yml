@@ -54,6 +54,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ env.MERGE_TARGET }}
+          token: ${{ secrets.GH_PAT }}
           fetch-depth: 0
 
       - name: Delete Previous Merge Comments
@@ -78,12 +79,15 @@ jobs:
 
       - name: Merge Source Branch
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           # Git 설정 (PR 작성자의 정보로 설정)
           git config user.name "${{ env.PR_AUTHOR }}"
           git config user.email "${{ env.PR_AUTHOR_EMAIL }}"
 
+          # 원격 저장소 URL을 PAT를 포함하도록 업데이트 (이렇게 하면 PAT로 인증된 push가 수행됨)
+          git remote set-url origin https://$GH_TOKEN@github.com/${{ github.repository }}.git
+          
           # 병합 시도
           if git merge --no-ff origin/${{ env.SOURCE_BRANCH }} --no-edit; then
             git push --force origin ${{ env.MERGE_TARGET }}
