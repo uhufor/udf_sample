@@ -5,3 +5,6 @@ class TestClassOne(val name: String) {
 
 class TestClassTwo {
 }
+
+class TestClassThree {
+}
