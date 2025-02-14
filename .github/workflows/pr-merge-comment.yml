@@ -78,7 +78,7 @@ jobs:
 
       - name: Merge Source Branch
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           # Git 설정 (PR 작성자의 정보로 설정)
           git config user.name "${{ env.PR_AUTHOR }}"
