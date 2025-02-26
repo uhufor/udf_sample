@@ -1,4 +1,4 @@
 package com.uhufor.udf
 
-class TestClassA {
+class TestClassA(val a: String) {
 }
