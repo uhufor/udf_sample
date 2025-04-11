@@ -7,6 +7,13 @@ import java.io.Serializable
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+/**
+ * [ArgumentDelegate]는 Fragment의 arguments Bundle에 타입 [T]의 nullable 프로퍼티를 간편하게
+ * 저장/읽을 수 있도록 돕는 Delegate입니다.
+ *
+ * @param defaultValue 만약 arguments Bundle에 값이 존재하지 않을 경우 반환할 기본값 (nullable)
+ * @constructor Bundle 내에 값이 없을 때 [defaultValue]를 반환하는 Delegate를 생성합니다.
+ */
 class ArgumentDelegate<T : Any>(
     private val defaultValue: T? = null,
 ) : ReadWriteProperty<Fragment, T?> {
@@ -30,6 +37,12 @@ class ArgumentDelegate<T : Any>(
     }
 }
 
+/**
+ * [ArgumentNotNullDelegate]는 Fragment의 arguments Bundle에 타입 [T]의 non-null 프로퍼티를 간편하게
+ * 저장/읽을 수 있도록 돕는 Delegate입니다.
+ *
+ * arguments Bundle 또는 해당 key의 값이 존재하지 않으면 [IllegalStateException]을 던집니다.
+ */
 class ArgumentNotNullDelegate<T : Any> : ReadWriteProperty<Fragment, T> {
 
     override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
@@ -87,7 +100,6 @@ private fun <T : Any> Bundle.getValueByType(key: String): T? {
     }
 }
 
-@Suppress("UNCHECKED_CAST")
 private fun <T : Any> Bundle.putValueByType(key: String, value: T) {
     when (value) {
         is Boolean -> putBoolean(key, value)
@@ -108,54 +120,43 @@ private fun <T : Any> Bundle.putValueByType(key: String, value: T) {
         is LongArray -> putLongArray(key, value)
         is FloatArray -> putFloatArray(key, value)
         is DoubleArray -> putDoubleArray(key, value)
-        is Array<*> -> {
-            when {
-                value.isArrayOf<String>() -> {
-                    putStringArray(key, value as Array<String>)
-                }
-
-                value.isArrayOf<Parcelable>() -> {
-                    putParcelableArray(key, value as Array<Parcelable>)
-                }
-
-                value.isArrayOf<CharSequence>() -> {
-                    putCharSequenceArray(key, value as Array<CharSequence>)
-                }
-
-                else -> {
-                    throw IllegalArgumentException("Unsupported array type: $value")
-                }
-            }
-        }
-
-        is List<*> -> {
-            when {
-                value.all { it is String } -> {
-                    putStringArrayList(key, value as ArrayList<String>)
-                }
-
-                value.all { it is Int } -> {
-                    putIntegerArrayList(key, value as ArrayList<Int>)
-                }
-
-                value.all { it is CharSequence } -> {
-                    putCharSequenceArrayList(key, value as ArrayList<CharSequence>)
-                }
-
-                value.all { it is Parcelable } -> {
-                    putParcelableArrayList(key, value as ArrayList<Parcelable>)
-                }
-
-                else -> {
-                    throw IllegalArgumentException("Unsupported list type: $value")
-                }
-            }
-        }
-
+        is Array<*> -> putArrayTypeValue(key, value)
+        is List<*> -> putListTypeValue(key, value)
         is Parcelable -> putParcelable(key, value)
         is Serializable -> putSerializable(key, value)
         else -> throw IllegalArgumentException("Unsupported type: $value")
     }
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun Bundle.putArrayTypeValue(key: String, value: Array<*>) = when {
+    value.isArrayOf<String>() -> {
+        putStringArray(key, value as Array<String>)
+    }
+    value.isArrayOf<Parcelable>() -> {
+        putParcelableArray(key, value as Array<Parcelable>)
+    }
+    value.isArrayOf<CharSequence>() -> {
+        putCharSequenceArray(key, value as Array<CharSequence>)
+    }
+    else -> throw IllegalArgumentException("Unsupported array type: $value")
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun Bundle.putListTypeValue(key: String, value: List<*>) = when {
+    value.all { it is String } -> {
+        putStringArrayList(key, value as ArrayList<String>)
+    }
+    value.all { it is Int } -> {
+        putIntegerArrayList(key, value as ArrayList<Int>)
+    }
+    value.all { it is CharSequence } -> {
+        putCharSequenceArrayList(key, value as ArrayList<CharSequence>)
+    }
+    value.all { it is Parcelable } -> {
+        putParcelableArrayList(key, value as ArrayList<Parcelable>)
+    }
+    else -> throw IllegalArgumentException("Unsupported list type: $value")
 }
 
 fun <T : Any> Fragment.argument(defaultValue: T? = null): ReadWriteProperty<Fragment, T?> =
