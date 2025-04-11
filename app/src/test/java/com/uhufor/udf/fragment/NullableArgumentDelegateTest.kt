@@ -15,16 +15,16 @@ import java.io.Serializable
 import kotlin.test.assertNotNull
 
 @Parcelize
-class TestParcelable(val label: String, val meta: NestedTestParcelable) : Parcelable
+internal class TestParcelable(val label: String, val meta: NestedTestParcelable) : Parcelable
 
 @Parcelize
-class NestedTestParcelable(val size: Long) : Parcelable
+internal class NestedTestParcelable(val size: Long) : Parcelable
 
-class TestSerializable(val label: String, val meta: NestedTestSerializable) : Serializable
+internal class TestSerializable(val label: String, val meta: NestedTestSerializable) : Serializable
 
-class NestedTestSerializable(val size: Long) : Serializable
+internal class NestedTestSerializable(val size: Long) : Serializable
 
-class ArgumentDelegateTestNullableFragment : Fragment() {
+internal class NullableArgumentFragment : Fragment() {
     // Primitive
     var boolValue by argument<Boolean>()
     var byteValue by argument<Byte>()
@@ -65,11 +65,11 @@ class ArgumentDelegateTestNullableFragment : Fragment() {
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
-class ArgumentDelegateTest {
+internal class NullableArgumentDelegateTest {
 
     @Test
     fun givenBooleanArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.boolValue = true
 
@@ -79,7 +79,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenByteArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
         val byteVal: Byte = 100
 
         fragment.byteValue = byteVal
@@ -90,7 +90,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenCharArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.charValue = 'Z'
 
@@ -100,7 +100,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenShortArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         val shortVal: Short = 123
         fragment.shortValue = shortVal
@@ -111,7 +111,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenIntArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.intValue = 999
 
@@ -121,7 +121,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenLongArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.longValue = 123456789L
 
@@ -131,7 +131,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenFloatArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.floatValue = 3.14f
 
@@ -141,7 +141,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenDoubleArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.doubleValue = 99.99
 
@@ -151,7 +151,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenStringArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.stringValue = "Hello"
 
@@ -161,7 +161,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenCharSequenceArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.charSequenceValue = "CharSeq"
 
@@ -171,7 +171,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenBooleanArrayArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.boolArrayValue = booleanArrayOf(true, false, true)
 
@@ -182,7 +182,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenByteArrayArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.byteArrayValue = byteArrayOf(1, 2, 3)
 
@@ -193,7 +193,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenShortArrayArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.shortArrayValue = shortArrayOf(10, 20, 30)
 
@@ -204,7 +204,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenCharArrayArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.charArrayValue = charArrayOf('A', 'B', 'C')
 
@@ -215,7 +215,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenIntArrayArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.intArrayValue = intArrayOf(1, 2, 3)
 
@@ -226,7 +226,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenLongArrayArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.longArrayValue = longArrayOf(100L, 200L, 300L)
 
@@ -237,7 +237,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenFloatArrayArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.floatArrayValue = floatArrayOf(1.1f, 2.2f, 3.3f)
 
@@ -248,7 +248,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenDoubleArrayArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.doubleArrayValue = doubleArrayOf(1.11, 2.22, 3.33)
 
@@ -259,7 +259,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenStringArrayArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.stringArrayValue = arrayOf("one", "two", "three")
 
@@ -270,7 +270,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenParcelableArrayArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
         val arrayVal = arrayOf(
             TestParcelable("a", NestedTestParcelable(500L)),
             TestParcelable("b", NestedTestParcelable(200L))
@@ -299,7 +299,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenCharSequenceArrayArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.charSequenceArrayValue = arrayOf("x", "y")
 
@@ -310,7 +310,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenStringListArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.stringListValue = arrayListOf("alpha", "beta")
 
@@ -321,7 +321,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenIntListArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.intListValue = arrayListOf(100, 200)
 
@@ -332,7 +332,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenCharSequenceListArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.charSequenceListValue = arrayListOf("c1", "c2")
 
@@ -343,7 +343,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenParcelableListArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
         val listVal = arrayListOf(
             TestParcelable("a", NestedTestParcelable(500L)),
             TestParcelable("b", NestedTestParcelable(200L))
@@ -372,7 +372,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenParcelableArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.parcelableValue = TestParcelable("parcelData", NestedTestParcelable(100L))
 
@@ -392,7 +392,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenSerializableArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         fragment.serializableValue = TestSerializable("serialData", NestedTestSerializable(200L))
 
@@ -412,7 +412,7 @@ class ArgumentDelegateTest {
 
     @Test
     fun givenAnyArgument_whenNotSet_thenShouldReturnNull() {
-        val fragment = ArgumentDelegateTestNullableFragment()
+        val fragment = NullableArgumentFragment()
 
         assertNull(fragment.boolValue)
         assertNull(fragment.byteValue)
