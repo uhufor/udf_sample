@@ -7,7 +7,7 @@ import java.io.Serializable
 import kotlin.reflect.KClass
 
 @Suppress("UNCHECKED_CAST")
-internal fun <T : Any> Bundle.getValueByType(key: String, clazz: KClass<T>): T? {
+fun <T : Any> Bundle.getValueByType(key: String, clazz: KClass<T>): T? {
     if (!containsKey(key)) return null
 
     return when (clazz) {
@@ -37,7 +37,19 @@ internal fun <T : Any> Bundle.getValueByType(key: String, clazz: KClass<T>): T? 
                 clazz.java as Class<Serializable>
             )
         }
-        else -> get(key)
+        else -> {
+            if (Parcelable::class.java.isAssignableFrom(clazz.java)) {
+                BundleCompat.getParcelable(this, key, clazz.java)
+            } else if (Serializable::class.java.isAssignableFrom(clazz.java)) {
+                BundleCompat.getSerializable(
+                    this,
+                    key,
+                    clazz.java as Class<Serializable>
+                )
+            } else {
+                throw IllegalArgumentException()
+            }
+        }
     } as? T
 }
 
@@ -64,7 +76,7 @@ private fun <T : Any> Bundle.getListTypeByValue(key: String, clazz: KClass<T>): 
     return get(key) as? T
 }
 
-internal fun <T : Any> Bundle.putValueByType(key: String, value: T) {
+fun <T : Any> Bundle.putValueByType(key: String, value: T) {
     when (value) {
         is Boolean -> putBoolean(key, value)
         is Byte -> putByte(key, value)

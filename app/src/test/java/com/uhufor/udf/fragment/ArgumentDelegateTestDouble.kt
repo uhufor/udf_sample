@@ -50,8 +50,8 @@ internal class NullableArgumentFragment : Fragment() {
     var parcelableListValue by argument<List<TestParcelable>>()
 
     // Typed Class
-    var parcelableValue by argument<Parcelable>()
-    var serializableValue by argument<Serializable>()
+    var parcelableValue by argument<TestParcelable>()
+    var serializableValue by argument< TestSerializable>()
 }
 
 internal class NotNullArgumentFragment : Fragment() {
@@ -89,8 +89,8 @@ internal class NotNullArgumentFragment : Fragment() {
     var parcelableListValue by argumentNotNull<List<TestParcelable>>()
 
     // Typed Class
-    var parcelableValue by argumentNotNull<Parcelable>()
-    var serializableValue by argumentNotNull<Serializable>()
+    var parcelableValue by argumentNotNull<TestParcelable>()
+    var serializableValue by argumentNotNull<TestSerializable>()
 }
 
 

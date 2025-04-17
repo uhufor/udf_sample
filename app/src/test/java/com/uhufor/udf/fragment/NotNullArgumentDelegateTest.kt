@@ -569,7 +569,7 @@ internal class NotNullArgumentDelegateTest {
         assertEquals("parcelData", stored.label)
         assertEquals(100L, stored.meta.size)
 
-        val retrieved = fragment.parcelableValue as TestParcelable
+        val retrieved = fragment.parcelableValue
         assertEquals("parcelData", retrieved.label)
         assertEquals(100L, retrieved.meta.size)
     }
@@ -597,7 +597,7 @@ internal class NotNullArgumentDelegateTest {
         assertEquals("serialData", stored.label)
         assertEquals(200L, stored.meta.size)
 
-        val retrieved = fragment.serializableValue as TestSerializable
+        val retrieved = fragment.serializableValue
         assertEquals("serialData", retrieved.label)
         assertEquals(200L, retrieved.meta.size)
     }
