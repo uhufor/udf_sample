@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     id("com.uhufor.jacoco-convention")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -63,10 +64,12 @@ dependencies {
     testImplementation(libs.truth)
     testImplementation(libs.jetbrains.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+    testImplementation (libs.robolectric)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    testImplementation(kotlin("test"))
 }
