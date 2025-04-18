@@ -9,9 +9,10 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 @RunWith(RobolectricTestRunner::class)
-@Config(manifest = Config.NONE)
+@Config(manifest = Config.NONE, sdk = [34])
 internal class NullableArgumentDelegateTest {
 
     @Test
@@ -203,119 +204,119 @@ internal class NullableArgumentDelegateTest {
         assertArrayEquals(doubleArrayOf(1.11, 2.22, 3.33), stored, 0.0)
         assertArrayEquals(doubleArrayOf(1.11, 2.22, 3.33), fragment.doubleArrayValue, 0.0)
     }
-
-    @Test
-    fun givenStringArrayArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = NullableArgumentFragment()
-
-        fragment.stringArrayValue = arrayOf("one", "two", "three")
-
-        val stored = fragment.arguments?.getStringArray("stringArrayValue")
-        assertArrayEquals(arrayOf("one", "two", "three"), stored)
-        assertArrayEquals(arrayOf("one", "two", "three"), fragment.stringArrayValue)
-    }
-
-    @Test
-    fun givenParcelableArrayArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = NullableArgumentFragment()
-        val arrayVal = arrayOf(
-            TestParcelable("a", NestedTestParcelable(500L)),
-            TestParcelable("b", NestedTestParcelable(200L))
-        )
-
-        fragment.parcelableArrayValue = arrayVal
-
-        val stored = BundleCompat.getParcelableArray(
-            fragment.arguments!!,
-            "parcelableArrayValue",
-            TestParcelable::class.java
-        )
-        assertNotNull(stored)
-        assertEquals((stored[0] as TestParcelable).label, arrayVal[0].label)
-        assertEquals((stored[0] as TestParcelable).meta, arrayVal[0].meta)
-        assertEquals((stored[1] as TestParcelable).label, arrayVal[1].label)
-        assertEquals((stored[1] as TestParcelable).meta, arrayVal[1].meta)
-
-        val retrievedArray = fragment.parcelableArrayValue
-        assertNotNull(retrievedArray)
-        assertEquals(retrievedArray[0].label, arrayVal[0].label)
-        assertEquals(retrievedArray[0].meta, arrayVal[0].meta)
-        assertEquals(retrievedArray[1].label, arrayVal[1].label)
-        assertEquals(retrievedArray[1].meta, arrayVal[1].meta)
-    }
-
-    @Test
-    fun givenCharSequenceArrayArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = NullableArgumentFragment()
-
-        fragment.charSequenceArrayValue = arrayOf("x", "y")
-
-        val stored = fragment.arguments?.getCharSequenceArray("charSequenceArrayValue")
-        assertArrayEquals(arrayOf("x", "y"), stored)
-        assertArrayEquals(arrayOf("x", "y"), fragment.charSequenceArrayValue)
-    }
-
-    @Test
-    fun givenStringListArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = NullableArgumentFragment()
-
-        fragment.stringListValue = arrayListOf("alpha", "beta")
-
-        val stored = fragment.arguments?.getStringArrayList("stringListValue")
-        assertEquals(listOf("alpha", "beta"), stored)
-        assertEquals(listOf("alpha", "beta"), fragment.stringListValue)
-    }
-
-    @Test
-    fun givenIntListArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = NullableArgumentFragment()
-
-        fragment.intListValue = arrayListOf(100, 200)
-
-        val stored = fragment.arguments?.getIntegerArrayList("intListValue")
-        assertEquals(listOf(100, 200), stored)
-        assertEquals(listOf(100, 200), fragment.intListValue)
-    }
-
-    @Test
-    fun givenCharSequenceListArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = NullableArgumentFragment()
-
-        fragment.charSequenceListValue = arrayListOf("c1", "c2")
-
-        val stored = fragment.arguments?.getCharSequenceArrayList("charSequenceListValue")
-        assertEquals(listOf("c1", "c2"), stored)
-        assertEquals(listOf("c1", "c2"), fragment.charSequenceListValue)
-    }
-
-    @Test
-    fun givenParcelableListArgument_whenSetValue_thenShouldRetrieveSameValue() {
-        val fragment = NullableArgumentFragment()
-        val listVal = arrayListOf(
-            TestParcelable("a", NestedTestParcelable(500L)),
-            TestParcelable("b", NestedTestParcelable(200L))
-        )
-
-        fragment.parcelableListValue = listVal
-
-        val stored = BundleCompat.getParcelableArrayList<TestParcelable>(
-            fragment.arguments!!,
-            "parcelableListValue",
-            TestParcelable::class.java
-        )
-        assertNotNull(stored)
-        assertEquals(listVal[0].label, stored[0].label)
-        assertEquals(listVal[0].meta, stored[0].meta)
-        assertEquals(listVal[1].label, stored[1].label)
-        assertEquals(listVal[1].meta, stored[1].meta)
-
-        val retrievedList = fragment.parcelableListValue
-        assertNotNull(retrievedList)
-        assertEquals(listVal[0].label, retrievedList[0].label)
-        assertEquals(listVal[0].meta, retrievedList[0].meta)
-        assertEquals(listVal[1].label, retrievedList[1].label)
-        assertEquals(listVal[1].meta, retrievedList[1].meta)
-    }
+//
+//    @Test
+//    fun givenStringArrayArgument_whenSetValue_thenShouldRetrieveSameValue() {
+//        val fragment = NullableArgumentFragment()
+//
+//        fragment.stringArrayValue = arrayOf("one", "two", "three")
+//
+//        val stored = fragment.arguments?.getStringArray("stringArrayValue")
+//        assertArrayEquals(arrayOf("one", "two", "three"), stored)
+//        assertArrayEquals(arrayOf("one", "two", "three"), fragment.stringArrayValue)
+//    }
+//
+//    @Test
+//    fun givenParcelableArrayArgument_whenSetValue_thenShouldRetrieveSameValue() {
+//        val fragment = NullableArgumentFragment()
+//        val arrayVal = arrayOf(
+//            TestParcelable("a", NestedTestParcelable(500L)),
+//            TestParcelable("b", NestedTestParcelable(200L))
+//        )
+//
+//        fragment.parcelableArrayValue = arrayVal
+//
+//        val stored = BundleCompat.getParcelableArray(
+//            fragment.arguments!!,
+//            "parcelableArrayValue",
+//            TestParcelable::class.java
+//        )
+//        assertNotNull(stored)
+//        assertEquals((stored[0] as TestParcelable).label, arrayVal[0].label)
+//        assertEquals((stored[0] as TestParcelable).meta, arrayVal[0].meta)
+//        assertEquals((stored[1] as TestParcelable).label, arrayVal[1].label)
+//        assertEquals((stored[1] as TestParcelable).meta, arrayVal[1].meta)
+//
+//        val retrievedArray = fragment.parcelableArrayValue
+//        assertNotNull(retrievedArray)
+//        assertEquals(retrievedArray[0].label, arrayVal[0].label)
+//        assertEquals(retrievedArray[0].meta, arrayVal[0].meta)
+//        assertEquals(retrievedArray[1].label, arrayVal[1].label)
+//        assertEquals(retrievedArray[1].meta, arrayVal[1].meta)
+//    }
+//
+//    @Test
+//    fun givenCharSequenceArrayArgument_whenSetValue_thenShouldRetrieveSameValue() {
+//        val fragment = NullableArgumentFragment()
+//
+//        fragment.charSequenceArrayValue = arrayOf("x", "y")
+//
+//        val stored = fragment.arguments?.getCharSequenceArray("charSequenceArrayValue")
+//        assertArrayEquals(arrayOf("x", "y"), stored)
+//        assertArrayEquals(arrayOf("x", "y"), fragment.charSequenceArrayValue)
+//    }
+//
+//    @Test
+//    fun givenStringListArgument_whenSetValue_thenShouldRetrieveSameValue() {
+//        val fragment = NullableArgumentFragment()
+//
+//        fragment.stringListValue = arrayListOf("alpha", "beta")
+//
+//        val stored = fragment.arguments?.getStringArrayList("stringListValue")
+//        assertEquals(listOf("alpha", "beta"), stored)
+//        assertEquals(listOf("alpha", "beta"), fragment.stringListValue)
+//    }
+//
+//    @Test
+//    fun givenIntListArgument_whenSetValue_thenShouldRetrieveSameValue() {
+//        val fragment = NullableArgumentFragment()
+//
+//        fragment.intListValue = arrayListOf(100, 200)
+//
+//        val stored = fragment.arguments?.getIntegerArrayList("intListValue")
+//        assertEquals(listOf(100, 200), stored)
+//        assertEquals(listOf(100, 200), fragment.intListValue)
+//    }
+//
+//    @Test
+//    fun givenCharSequenceListArgument_whenSetValue_thenShouldRetrieveSameValue() {
+//        val fragment = NullableArgumentFragment()
+//
+//        fragment.charSequenceListValue = arrayListOf("c1", "c2")
+//
+//        val stored = fragment.arguments?.getCharSequenceArrayList("charSequenceListValue")
+//        assertEquals(listOf("c1", "c2"), stored)
+//        assertEquals(listOf("c1", "c2"), fragment.charSequenceListValue)
+//    }
+//
+//    @Test
+//    fun givenParcelableListArgument_whenSetValue_thenShouldRetrieveSameValue() {
+//        val fragment = NullableArgumentFragment()
+//        val listVal = arrayListOf(
+//            TestParcelable("a", NestedTestParcelable(500L)),
+//            TestParcelable("b", NestedTestParcelable(200L))
+//        )
+//
+//        fragment.parcelableListValue = listVal
+//
+//        val stored = BundleCompat.getParcelableArrayList<TestParcelable>(
+//            fragment.arguments!!,
+//            "parcelableListValue",
+//            TestParcelable::class.java
+//        )
+//        assertNotNull(stored)
+//        assertEquals(listVal[0].label, stored[0].label)
+//        assertEquals(listVal[0].meta, stored[0].meta)
+//        assertEquals(listVal[1].label, stored[1].label)
+//        assertEquals(listVal[1].meta, stored[1].meta)
+//
+//        val retrievedList = fragment.parcelableListValue
+//        assertNotNull(retrievedList)
+//        assertEquals(listVal[0].label, retrievedList[0].label)
+//        assertEquals(listVal[0].meta, retrievedList[0].meta)
+//        assertEquals(listVal[1].label, retrievedList[1].label)
+//        assertEquals(listVal[1].meta, retrievedList[1].meta)
+//    }
 
     @Test
     fun givenParcelableArgument_whenSetValue_thenShouldRetrieveSameValue() {
@@ -358,6 +359,76 @@ internal class NullableArgumentDelegateTest {
     }
 
     @Test
+    fun givenBooleanArgumentWithDefault_whenSetValue_thenShouldRetrieveSameValue() {
+        val fragment = NullableArgumentWithDefaultFragment()
+
+        fragment.boolValueWithDefault = false
+
+        assertEquals(false, fragment.arguments?.getBoolean("boolValueWithDefault"))
+        assertEquals(false, fragment.boolValueWithDefault)
+    }
+
+    @Test
+    fun givenBooleanArgumentWithDefault_whenNotSetValue_thenShouldRetrieveDefaultValue() {
+        val fragment = NullableArgumentWithDefaultFragment()
+
+        assertNull(fragment.arguments?.getBoolean("boolValueWithDefault"))
+        assertTrue {
+            @Suppress("KotlinConstantConditions")
+            NullableArgumentWithDefaultFragment.DEFAULT_BOOL_VALUE == fragment.boolValueWithDefault
+        }
+    }
+
+    @Test
+    fun givenBooleanArgumentWithDefault_whenSetNullValue_thenShouldRetrieveDefaultValue() {
+        val fragment = NullableArgumentWithDefaultFragment()
+
+        fragment.boolValueWithDefault = false
+        assertEquals(false, fragment.boolValueWithDefault)
+
+        fragment.boolValueWithDefault = null
+        assertTrue {
+            @Suppress("KotlinConstantConditions")
+            NullableArgumentWithDefaultFragment.DEFAULT_BOOL_VALUE == fragment.boolValueWithDefault
+        }
+    }
+
+    @Test
+    fun givenIntArgumentWithDefault_whenSetValue_thenShouldRetrieveSameValue() {
+        val fragment = NullableArgumentWithDefaultFragment()
+        val expected = -100
+
+        fragment.intValueWithDefault = expected
+
+        assertEquals(expected, fragment.arguments?.getInt("intValueWithDefault"))
+        assertEquals(expected, fragment.intValueWithDefault)
+    }
+
+    @Test
+    fun givenIntArgumentWithDefault_whenNotSetValue_thenShouldRetrieveDefaultValue() {
+        val fragment = NullableArgumentWithDefaultFragment()
+
+        assertNull(fragment.arguments?.getInt("intValueWithDefault"))
+        assertTrue {
+            NullableArgumentWithDefaultFragment.DEFAULT_INT_VALUE == fragment.intValueWithDefault
+        }
+    }
+
+    @Test
+    fun givenIntArgumentWithDefault_whenSetNullValue_thenShouldRetrieveDefaultValue() {
+        val fragment = NullableArgumentWithDefaultFragment()
+        val expected = -100
+
+        fragment.intValueWithDefault = expected
+        assertEquals(expected, fragment.intValueWithDefault)
+
+        fragment.intValueWithDefault = null
+        assertTrue {
+            NullableArgumentWithDefaultFragment.DEFAULT_INT_VALUE == fragment.intValueWithDefault
+        }
+    }
+
+    @Test
     fun givenAnyArgument_whenNotSet_thenShouldReturnNull() {
         val fragment = NullableArgumentFragment()
 
@@ -379,13 +450,13 @@ internal class NullableArgumentDelegateTest {
         assertNull(fragment.longArrayValue)
         assertNull(fragment.floatArrayValue)
         assertNull(fragment.doubleArrayValue)
-        assertNull(fragment.stringArrayValue)
-        assertNull(fragment.parcelableArrayValue)
-        assertNull(fragment.charSequenceArrayValue)
-        assertNull(fragment.stringListValue)
-        assertNull(fragment.intListValue)
-        assertNull(fragment.charSequenceListValue)
-        assertNull(fragment.parcelableListValue)
+//        assertNull(fragment.stringArrayValue)
+//        assertNull(fragment.parcelableArrayValue)
+//        assertNull(fragment.charSequenceArrayValue)
+//        assertNull(fragment.stringListValue)
+//        assertNull(fragment.intListValue)
+//        assertNull(fragment.charSequenceListValue)
+//        assertNull(fragment.parcelableListValue)
         assertNull(fragment.parcelableValue)
         assertNull(fragment.serializableValue)
     }

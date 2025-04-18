@@ -13,68 +13,61 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.typeOf
 
 inline fun <reified T> Fragment.argumentSuper(
-    defaultValue: T? = null,
-): ReadWriteProperty<Fragment, T> {
-
-    val isNullable = typeOf<T>().isMarkedNullable
-    println("argumentSuper[${T::class.simpleName}]: $isNullable")
-
-    return if (isNullable) {
-        argumentSuperNullable(defaultValue)
+    default: T? = null,
+): ReadWriteProperty<Fragment, T> =
+    if (typeOf<T>().isMarkedNullable) {
+        argumentSuperNullable(default)
     } else {
-        argumentSuperNotNull(defaultValue)
+        argumentSuperNotNull(default)
     }
-}
 
 inline fun <reified T> Fragment.argumentSuperNullable(
-    defaultValue: T? = null,
-): ReadWriteProperty<Fragment, T> =
-    object : ReadWriteProperty<Fragment, T> {
+    default: T? = null,
+): ReadWriteProperty<Fragment, T> = object : ReadWriteProperty<Fragment, T> {
 
-        override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
-            val key = property.name
-            val arguments = thisRef.arguments ?: return defaultValue as T
+    override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
+        val key = property.name
+        val arguments = thisRef.arguments ?: return default as T
 
-            return (arguments.getValueBySuper(key) ?: defaultValue) as T
-        }
-
-        override fun setValue(thisRef: Fragment, property: KProperty<*>, value: T) {
-            val key = property.name
-            val args = thisRef.arguments ?: Bundle().also(thisRef::setArguments)
-
-            if (value == null) {
-                args.remove(key)
-            } else {
-                args.putValueBySuper(key, value)
-            }
-        }
+        return (arguments.getValueBySuper(key) ?: default) as T
     }
 
-inline fun <reified T> Fragment.argumentSuperNotNull(
-    defaultValue: T? = null,
-): ReadWriteProperty<Fragment, T> =
-    object : ReadWriteProperty<Fragment, T> {
+    override fun setValue(thisRef: Fragment, property: KProperty<*>, value: T) {
+        val key = property.name
+        val args = thisRef.arguments ?: Bundle().also(thisRef::setArguments)
 
-        override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
-            val key = property.name
-            val value = thisRef.arguments
-                ?.getValueBySuper(key)
-                ?: defaultValue
-
-            check(value != null) {
-                "Property '${property.name}' could not be read from the Fragment arguments."
-            }
-
-            return value
-        }
-
-        override fun setValue(thisRef: Fragment, property: KProperty<*>, value: T) {
-            val key = property.name
-            val args = thisRef.arguments ?: Bundle().also(thisRef::setArguments)
-
+        if (value == null) {
+            args.remove(key)
+        } else {
             args.putValueBySuper(key, value)
         }
     }
+}
+
+inline fun <reified T> Fragment.argumentSuperNotNull(
+    default: T? = null,
+): ReadWriteProperty<Fragment, T> = object : ReadWriteProperty<Fragment, T> {
+
+    override fun getValue(thisRef: Fragment, property: KProperty<*>): T {
+        val key = property.name
+        val value = thisRef.arguments
+            ?.getValueBySuper(key)
+            ?: default
+
+        check(value != null) {
+            "Property '${property.name}' could not be read from the Fragment arguments."
+        }
+
+        return value
+    }
+
+    override fun setValue(thisRef: Fragment, property: KProperty<*>, value: T) {
+        val key = property.name
+        val args = thisRef.arguments ?: Bundle().also(thisRef::setArguments)
+
+        args.putValueBySuper(key, value)
+    }
+}
 
 inline fun <reified T> Bundle.getValueBySuper(key: String): T? {
     if (!containsKey(key)) return null
@@ -98,12 +91,13 @@ inline fun <reified T> Bundle.getValueBySuper(key: String): T? {
         LongArray::class -> getLongArray(key)
         FloatArray::class -> getFloatArray(key)
         DoubleArray::class -> getDoubleArray(key)
-        Binder::class -> getBinder(key)
         Bundle::class -> getBundle(key)
         Size::class -> getSize(key)
         SizeF::class -> getSizeF(key)
         else -> {
-            if (Parcelable::class.java.isAssignableFrom(T::class.java)) {
+            if (Binder::class.java.isAssignableFrom(T::class.java)) {
+                getBinder(key)
+            } else if (Parcelable::class.java.isAssignableFrom(T::class.java)) {
                 BundleCompat.getParcelable(this, key, T::class.java)
             } else if (Serializable::class.java.isAssignableFrom(T::class.java)) {
                 @Suppress("UNCHECKED_CAST")
@@ -135,10 +129,10 @@ inline fun <reified T> Bundle.putValueBySuper(key: String, value: T) {
         is LongArray -> putLongArray(key, value)
         is FloatArray -> putFloatArray(key, value)
         is DoubleArray -> putDoubleArray(key, value)
-        is Binder -> putBinder(key, value)
         is Bundle -> putBundle(key, value)
         is Size -> putSize(key, value)
         is SizeF -> putSizeF(key, value)
+        is Binder -> putBinder(key, value)
         is Parcelable -> putParcelable(key, value)
         is Serializable -> putSerializable(key, value)
         else -> throw IllegalArgumentException("Unsupported type: $value")

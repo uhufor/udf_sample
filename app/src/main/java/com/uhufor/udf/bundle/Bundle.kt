@@ -29,14 +29,6 @@ fun <T : Any> Bundle.getValueByType(key: String, clazz: KClass<T>): T? {
         LongArray::class -> getLongArray(key)
         FloatArray::class -> getFloatArray(key)
         DoubleArray::class -> getDoubleArray(key)
-        Parcelable::class -> BundleCompat.getParcelable(this, key, clazz.java)
-        Serializable::class -> {
-            BundleCompat.getSerializable(
-                this,
-                key,
-                clazz.java as Class<Serializable>
-            )
-        }
         else -> {
             if (Parcelable::class.java.isAssignableFrom(clazz.java)) {
                 BundleCompat.getParcelable(this, key, clazz.java)
