@@ -84,6 +84,12 @@ class SingleFlowUiEventProcessor(
         val parentSimpleName = parentClassDecl.simpleName.asString()
         val dispatcherName = "${parentSimpleName}Dispatcher"
 
+        val srcFile = parentClassDecl.containingFile
+            ?: run {
+                logger.warn("No containing file for ${parentClassDecl.simpleName}", parentClassDecl)
+                return
+            }
+
         val dispatcherInterface =
             ClassName("com.uhufor.udf.dispatcher", "GeneratedUiEventDispatcher")
 
@@ -117,7 +123,13 @@ class SingleFlowUiEventProcessor(
             .addType(typeSpec)
             .build()
 
-        fileSpec.writeTo(codeGenerator, Dependencies(aggregating = false))
+        fileSpec.writeTo(
+            codeGenerator,
+            Dependencies(
+                aggregating = false,
+                sources = arrayOf(srcFile)
+            )
+        )
     }
 
     data class EventHandler(
