@@ -13,6 +13,8 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.TextPaint
 import android.util.TypedValue
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -39,6 +41,7 @@ private class LabelDrawable(
     context: Context,
     private val label: String,
     private val alignLeft: Boolean,
+    private val topMarginPx: Int,
     depth: Int,
     textColor: Int,
     backgroundColor: Int,
@@ -64,14 +67,15 @@ private class LabelDrawable(
     private val textOffsetX: Float = context.dpToPx(HORIZONTAL_MARGIN).toFloat()
     private val textOffsetY: Float = context.dpToPx(FONT_SIZE).toFloat()
     private val offsetY: Float = context.dpToPx(LABEL_HEIGHT * depth).toFloat()
+    private val topMargin: Float = topMarginPx.toFloat() + offsetY
 
     override fun draw(canvas: Canvas) {
         val left = if (alignLeft) 0f else (bounds.right - textWidth).toFloat()
-        val top = offsetY
+        val top = topMargin
         val right = left + textWidth
         val bottom = top + textHeight
         canvas.drawRect(left, top, right, bottom, backgroundPaint)
-        canvas.drawLine(left, bottom.toFloat(), right, bottom.toFloat(), borderPaint)
+        canvas.drawLine(left, bottom, right, bottom, borderPaint)
 
         val textX = if (alignLeft) left + textOffsetX else left
         val textY = top + textOffsetY
@@ -118,11 +122,16 @@ private class DebugLabelActivityLifecycleCallbacks : Application.ActivityLifecyc
 
     override fun onActivityResumed(activity: Activity) {
         val rootView = activity.window.decorView
-        if (rootView.foreground == null) {
+        rootView.post {
+            val insetTop = ViewCompat.getRootWindowInsets(rootView)
+                ?.getInsets(WindowInsetsCompat.Type.statusBars())
+                ?.top ?: 0
+
             rootView.foreground = LabelDrawable(
                 context = activity,
                 label = activity.javaClass.simpleName,
                 alignLeft = true,
+                topMarginPx = insetTop,
                 depth = 0,
                 textColor = Color.WHITE,
                 backgroundColor = Color.argb(100, 0, 0, 0),
@@ -149,16 +158,23 @@ private class DebugLabelFragmentLifecycleCallbacks : FragmentManager.FragmentLif
         val rootView = f.view ?: return
 
         rootView.post {
-            if (rootView.foreground == null) {
-                rootView.foreground = LabelDrawable(
-                    context = f.requireContext(),
-                    label = f.javaClass.simpleName,
-                    alignLeft = false,
-                    depth = f.computeFragmentDepth(),
-                    textColor = Color.RED,
-                    backgroundColor = Color.argb(100, 180, 180, 255),
-                )
-            }
+            val insetTop = ViewCompat.getRootWindowInsets(rootView)
+                ?.getInsets(WindowInsetsCompat.Type.statusBars())
+                ?.top ?: 0
+
+            val location = IntArray(2)
+            rootView.getLocationInWindow(location)
+            val overlap = (insetTop - location[1]).coerceAtLeast(0)
+
+            rootView.foreground = LabelDrawable(
+                context = f.requireContext(),
+                label = f.javaClass.simpleName,
+                alignLeft = false,
+                topMarginPx = overlap,
+                depth = f.computeFragmentDepth(),
+                textColor = Color.RED,
+                backgroundColor = Color.argb(100, 180, 180, 255),
+            )
         }
     }
 
